@@ -10,10 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 /**
  * A bridge that tells the recyclerview how to display the data we give it
  */
-class TaskItemAdapter(val listOfItems: List<String>, val longClickListener: OnLongClickListener) : RecyclerView.Adapter<TaskItemAdapter.ViewHolder>(){
+class TaskItemAdapter(val listOfItems: List<String>, val longClickListener: OnLongClickListener, val onTapListener: OnTapListener) : RecyclerView.Adapter<TaskItemAdapter.ViewHolder>(){
 
     interface OnLongClickListener {
         fun onItemLongClicked(position: Int)
+    }
+
+    interface OnTapListener {
+        fun onTapListener(position: Int)
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
@@ -26,6 +30,10 @@ class TaskItemAdapter(val listOfItems: List<String>, val longClickListener: OnLo
             itemView.setOnLongClickListener {
                 longClickListener.onItemLongClicked(adapterPosition)
                 true
+            }
+
+            itemView.setOnClickListener {
+                onTapListener.onTapListener(adapterPosition)
             }
         }
     }

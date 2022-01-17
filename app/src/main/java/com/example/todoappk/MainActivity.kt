@@ -1,11 +1,15 @@
 package com.example.todoappk
 
+import android.app.Activity
+import android.app.Instrumentation
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.FileUtils
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.io.File
@@ -32,9 +36,31 @@ class MainActivity : AppCompatActivity() {
 
         loadItems()
 
+        val launchEditActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            result ->
+            if (result.resultCode == Activity.RESULT_OK){
+                val data: Intent? = result.data
+                val activity = data?.getStringExtra("activity").toString()
+                val position = data?.getIntExtra("position",0)
+                listofTasks[position!!] = activity
+                adapter.notifyItemChanged(position)
+                saveItems()
+            }
+        }
+
+        // Add on tap event for each element
+        val onTapListener = object : TaskItemAdapter.OnTapListener {
+            override fun onTapListener(position: Int) {
+                val i = Intent(this@MainActivity, EditActivity::class.java)
+                i.putExtra("activity",listofTasks[position])
+                i.putExtra("position",position)
+                launchEditActivity.launch(i)
+            }
+        }
+
         // Look up recyclerView in layout
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        adapter = TaskItemAdapter(listofTasks, onLongClickListener)
+        adapter = TaskItemAdapter(listofTasks, onLongClickListener, onTapListener)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -59,6 +85,7 @@ class MainActivity : AppCompatActivity() {
             saveItems()
 
         }
+
     }
 
     // Save the data that the user has inputted
