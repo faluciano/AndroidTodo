@@ -32,7 +32,9 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+Dealing with intents was a bit tricky because some of the features are depreacted therefore some workarounds had to be found.
+
+Overall I really enjoyed developing this app.
 
 ## License
 
